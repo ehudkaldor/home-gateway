@@ -1,0 +1,11 @@
+cat <<CONF >> named.conf
+  };
+  listen-on port 53 { any; };
+  allow-query { any; };
+  allow-recursion { any; };
+  allow-transfer { none; };
+  auth-nxdomain no;    # conform to RFC1035
+};
+controls {}; # Disable RNDC
+CONF
+
