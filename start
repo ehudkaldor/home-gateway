@@ -1,0 +1,30 @@
+#!/bin/bash
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+RESET_COLOR=`tput sgr0`
+
+
+
+DHCP_FILES=("/etc/dhcp/dhcpd.conf" "/etc/dhcp/dhcpd.conf.options" "/etc/dhcp/dhcpd.conf.pools" "/etc/dhcp/dhcpd.conf.reserved")
+echo Finding root location
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+echo Found root: $SCRIPTPATH
+
+echo " - Precheck: chekings existance of config-files/IPs"
+if [ -e $SCRIPTPATH/config-files/IPs ]; then
+	echo "	${GREEN}[OK]${RESET_COLOR} Found IPs file"
+else
+	echo "	${RED}[Error]${RESET_COLOR} No IPs file found. Aborting"
+	exit 1
+fi
+
+echo " - Precheck: chekings existance of DHCP files"
+for file in "${DHCP_FILES[@]}"; do
+	if [ -e $SCRIPTPATH/config-files/containers/isc-dhcp/$file ]; then
+		echo "	${GREEN}[OK]${RESET_COLOR} Found $file"
+	else
+		echo "	${RED}[Error]${RESET_COLOR} file $file not found. Aborting"
+		exit 1
+	fi
+done

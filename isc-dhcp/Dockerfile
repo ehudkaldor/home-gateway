@@ -17,16 +17,16 @@ RUN 		apk add --update dhcp curl iptables && \
 #ADD		etc/dhcp/dhcpd.conf /etc/dhcpd.conf
 
 RUN		mkdir -p /var/lib/dhcp/ && \ 
-		mkdir -p /etc/dhcp/ && \
-		touch /var/lib/dhcp/dhcpd.leases
+		mkdir -p /etc/dhcp/ 
+#		touch /var/lib/dhcp/dhcpd.leases
 
 #RUN		ls -la && cat /etc/dhcp/dhcpd.conf && ls -la /sys/class/net/eth1/
 
 USER		root
 
 CMD		\
-   		echo Setting up iptables... && \
-	   	iptables -t nat -A POSTROUTING -j MASQUERADE && \
+#   		echo Setting up iptables... && \
+#	   	iptables -t nat -A POSTROUTING -j MASQUERADE && \
    		echo Waiting for pipework to give us the eth1 interface... &&\
 		ls -la /etc/dhcp && \
    		./pipework --wait && \

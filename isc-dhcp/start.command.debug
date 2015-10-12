@@ -14,11 +14,10 @@ echo $HOME_GATEWAY_CONFIG_PATH/containers/isc-dhcp/etc/dhcp
 docker kill dhcp
 docker rm dhcp
 DHCP_CONTAINER=$( \
-	docker run -d \
+	docker run -it --rm \
 	--privileged \
 	-v $HOME_GATEWAY_CONFIG_PATH/containers/isc-dhcp/etc/dhcp:/etc/dhcp \
-	-v $HOME_GATEWAY_CONFIG_PATH/containers/isc-dhcp/var/lib/dhcp/:/var/lib/dhcp/ \
 	--name dhcp \
-	ehudkaldor/isc-dhcp \
+	ehudkaldor/isc-dhcp sh \
 )
-sudo ./pipework br0 $DHCP_CONTAINER $DHCP_IP/$NETMASK_PREFIX
+sudo ./pipework br0 $DHCP_CONTAINER 10.0.5.2/24
