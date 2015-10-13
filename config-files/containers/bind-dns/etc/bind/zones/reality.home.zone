@@ -1,0 +1,15 @@
+$ORIGIN .
+$TTL	604800
+reality.home	IN	SOA	dns1.reality.home. root.reality.home. (
+		    2015101301		; Serial
+                    38800		; Refresh
+		    3600		; Retry
+		    604800		; Expire
+		    38400 	; Negative Cache TTL
+		    )
+		NS	dns1.reality.home.
+$ORIGIN reality.home.
+gateway		A	10.0.30.1
+dhcp		A	10.0.30.2
+dns1		A	10.0.30.11
+

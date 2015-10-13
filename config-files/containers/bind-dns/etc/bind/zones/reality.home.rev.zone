@@ -1,0 +1,15 @@
+$ORIGIN .
+$TTL 907200	; 1 week 3 days 12 hours
+30.0.10.in-addr.arpa IN SOA	dns1.reality.home. root.reality.home. (
+				2015101302 ; serial
+				28800      ; refresh (8 hours)
+				604800     ; retry (1 week)
+				604800     ; expire (1 week)
+				86400      ; minimum (1 day)
+				)
+			NS	dns1.reality.home.
+$ORIGIN 30.0.10.in-addr.arpa.
+1			PTR	gateway.reality.home.
+2                       PTR     dhcp.reality.home.
+11			PTR	dns1.reality.home.
+			PTR	reality.home.

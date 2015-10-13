@@ -10,8 +10,8 @@ zone "reality.home" {
  
 # This is the zone definition for reverse DNS. replace 200.1.10 with your network
 # address in reverse notation - e.g my network address is 10.1.200
-zone "30.0.10.in-addr.arpa" {
+zone "200.1.10.in-addr.arpa" {
      type master;
-     file "reality.home.rev.zone";
+     file "/var/lib/bind/dragon.lab.rev.zone";
      allow-update { key rndc-key; };
 };
