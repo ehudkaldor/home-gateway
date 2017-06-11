@@ -1,2 +1,6 @@
 #!/usr/bin/with-contenv sh 
+<<<<<<< HEAD
 exec logutil-service /var/log/postgresql
+=======
+exec logutil-service /var/log/isc-dhcp
+>>>>>>> 04aa3b60c542baeea605113b329b86150f21e894

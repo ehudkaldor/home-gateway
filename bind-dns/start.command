@@ -7,5 +7,5 @@ NETMASK_PREFIX=$(docker run --rm ehudkaldor/helper ipcalc -p $DHCP_IP $NETMASK |
 
 docker kill dns
 docker rm dns
-DNS_CONTAINER=$(docker run -d --privileged -v $HOME_GATEWAY_CONFIG_PATH/containers/bind-dns/etc/bind:/etc/bind --name dns ehudkaldor/bind-dns)
-sudo ./pipework br0 $DNS_CONTAINER $DNS_IP/$NETMASK_PREFIX
+DNS_CONTAINER=$(docker run -d --privileged -v $HOME_GATEWAY_CONFIG_PATH/containers/bind-dns/etc/bind:/etc/bind -p 53:53 -p 53:53/udp --name dns ehudkaldor/bind-dns)
+sudo $PIPEWORK br0 $DNS_CONTAINER $DNS_IP/$NETMASK_PREFIX

@@ -5,7 +5,7 @@ RESET_COLOR=`tput sgr0`
 
 
 
-DHCP_FILES=("/etc/dhcp/dhcpd.conf" "/etc/dhcp/dhcpd.conf.options" "/etc/dhcp/dhcpd.conf.pools" "/etc/dhcp/dhcpd.conf.reserved")
+DHCP_FILES=("/etc/dhcp/dhcpd.conf" "/etc/dhcp/dhcpd.conf.options" "/etc/dhcp/dhcpd.conf.pools" "/etc/dhcp/dhcpd.conf.reserved" "/var/lib/dhcp/dhcpd.leases")
 echo Finding root location
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
