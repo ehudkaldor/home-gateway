@@ -1,0 +1,108 @@
+#
+# Sample configuration file for ISC dhcpd for Debian
+#
+#
+
+# The ddns-updates-style parameter controls whether or not the server will
+# attempt to do a DNS update when a lease is confirmed. We default to the
+# behavior of the version 2 packages ('none', since DHCP v2 didn't
+# have support for DDNS.)
+#ddns-update-style none;
+
+ddns-updates           {{or (getenv "DDNS_UPDATES") "on"}};
+ddns-update-style      {{or (getenv "DDNS_UPDATE_STYLE") "interim"}};
+ignore                 client-updates;
+update-static-leases   on;
+
+# This is the key so that DHCP can authenticate it's self to BIND9
+include                     "/etc/bind/rndc.key";
+
+# This is the communication zone
+zone {{or (getenv "DNS_ZONE_NAME") "default."}} {
+    primary 127.0.0.1;
+    key rndc-key;
+}
+
+# If this DHCP server is the official DHCP server for the local
+# network, the authoritative directive should be uncommented.
+authoritative;
+
+# Use this to send dhcp log messages to a different log file (you also
+# have to hack syslog.conf to complete the redirection).
+log-facility local7;
+
+subnet {{or (getenv "SUBNET") "192.168.0.0"}} netmask {{or (getenv "NETMASK") "255.255.255.0"}} {
+  range {{or (getenv "DHCP_FROM") "192.168.0.20"}} {{or (getenv "DHCP_TO") "192.168.0.100"}};
+  default-lease-time 600 max-lease-time 7200;
+  option subnet-mask {{or (getenv "NETMASK") "255.255.255.0"}};
+  option broadcast-address {{or (getenv "BROADCAST") "192.168.0.255"}};
+  option routers {{or (getenv "ROUTER") "192.168.0.1"}};
+  option domain-name-servers {{or (getenv "DNS") "192.168.0.1"}};
+  option domain-name {{or (getenv "DOMAIN") "default"}};
+
+
+  zone    10.40.10.in-addr.arpa. {
+    primary 10.40.10.1;
+    key             "rndc-key";
+  }
+
+  zone    localdomain. {
+    primary 10.40.10.1;
+    key             "rndc-key";
+  }
+
+}
+
+# A slightly different configuration for an internal subnet.
+#subnet 10.5.5.0 netmask 255.255.255.224 {
+#  range 10.5.5.26 10.5.5.30;
+#  option domain-name-servers ns1.internal.example.org;
+#  option domain-name "internal.example.org";
+#  option routers 10.5.5.1;
+#  option broadcast-address 10.5.5.31;
+#  default-lease-time 600;
+#  max-lease-time 7200;
+#}
+
+# Fixed IP addresses can also be specified for hosts.   These addresses
+# should not also be listed as being available for dynamic assignment.
+# Hosts for which fixed IP addresses have been specified can boot using
+# BOOTP or DHCP.   Hosts for which no fixed address is specified can only
+# be booted with DHCP, unless there is an address range on the subnet
+# to which a BOOTP client is connected which has the dynamic-bootp flag
+# set.
+host aruba {
+  hardware ethernet 18:64:72:c0:62:80;
+  fixed-address 10.40.10.100;
+}
+
+host osmc {
+  hardware ethernet 80:1f:02:f4:36:bc;
+  fixed-address 10.40.10.99;
+}
+
+# You can declare a class of clients and then do address allocation
+# based on that.   The example below shows a case where all clients
+# in a certain class get addresses on the 10.17.224/24 subnet, and all
+# other clients get addresses on the 10.0.29/24 subnet.
+
+#class "foo" {
+#  match if substring (option vendor-class-identifier, 0, 4) = "SUNW";
+#}
+
+#shared-network 224-29 {
+#  subnet 10.17.224.0 netmask 255.255.255.0 {
+#    option routers rtr-224.example.org;
+#  }
+#  subnet 10.0.29.0 netmask 255.255.255.0 {
+#    option routers rtr-29.example.org;
+#  }
+#  pool {
+#    allow members of "foo";
+#    range 10.17.224.10 10.17.224.250;
+#  }
+#  pool {
+#    deny members of "foo";
+#    range 10.0.29.10 10.0.29.230;
+#  }
+#}
