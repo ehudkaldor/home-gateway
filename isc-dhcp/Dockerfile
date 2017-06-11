@@ -6,29 +6,23 @@
 #
 ################################################
 
-FROM		alpine:3.2
-MAINTAINER	Ehud Kaldor <ehud.kaldor@gmail.com>
+FROM		ehudkaldor/alpine-s6-rpi
+MAINTAINER	Ehud Kaldor <ehud@unfairfunction.org>
 
-RUN 		apk add --update dhcp curl iptables && \
-		rm -rf /var/cache/apk/* && \
-	        curl -sSL -o pipework https://raw.github.com/jpetazzo/pipework/master/pipework && \
-        	chmod +x pipework
+RUN 		apk add --update dhcp && \
+		rm -rf /var/cache/apk/*
 
-#ADD		etc/dhcp/dhcpd.conf /etc/dhcpd.conf
+# VOLUME	/var/lib/dhcp/ && \
+RUN		mkdir -p /var/lib/dhcp/ && \
+		touch /var/lib/dhcp/dhcpd.leases
+#		mkdir -p /etc/dhcp/
 
-RUN		mkdir -p /var/lib/dhcp/ && \ 
-		mkdir -p /etc/dhcp/ 
-#		touch /var/lib/dhcp/dhcpd.leases
+COPY 		rootfs /
 
-#RUN		ls -la && cat /etc/dhcp/dhcpd.conf && ls -la /sys/class/net/eth1/
+RUN     	ln -s /bin/s6-true /etc/services.d/isc-dhcp/finish
 
-USER		root
 
-CMD		\
-#   		echo Setting up iptables... && \
-#	   	iptables -t nat -A POSTROUTING -j MASQUERADE && \
-   		echo Waiting for pipework to give us the eth1 interface... &&\
-		ls -la /etc/dhcp && \
-   		./pipework --wait && \
-   		echo Starting ISC-DHCP server on eth1... && \
-		dhcpd -f -cf /etc/dhcp/dhcpd.conf eth1
+#USER		root
+
+ENTRYPOINT	["/init"]
+
