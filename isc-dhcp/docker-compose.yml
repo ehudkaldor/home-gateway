@@ -1,0 +1,6 @@
+version: '3'
+services:
+  dhcp:
+    image: ehudkaldor/isc-dhcp:latest
+    env_file: 
+      - dhcp.env
