@@ -15,17 +15,17 @@ ignore                 client-updates;
 update-static-leases   on;
 
 # This is the key so that DHCP can authenticate it's self to BIND9
-include                     "/etc/bind/rndc.key";
+#include                     "/etc/bind/rndc.key";
 
 # This is the communication zone
-zone {{or (getenv "DNS_ZONE_NAME") "default."}} {
-    primary 127.0.0.1;
-    key rndc-key;
-}
+#zone {{or (getenv "DNS_ZONE_NAME") "default."}} {
+#    primary 127.0.0.1;
+#    key rndc-key;
+#}
 
 # If this DHCP server is the official DHCP server for the local
 # network, the authoritative directive should be uncommented.
-authoritative;
+#authoritative;
 
 # Use this to send dhcp log messages to a different log file (you also
 # have to hack syslog.conf to complete the redirection).
@@ -33,7 +33,8 @@ log-facility local7;
 
 subnet {{or (getenv "SUBNET") "192.168.0.0"}} netmask {{or (getenv "NETMASK") "255.255.255.0"}} {
   range {{or (getenv "DHCP_FROM") "192.168.0.20"}} {{or (getenv "DHCP_TO") "192.168.0.100"}};
-  default-lease-time 600 max-lease-time 7200;
+  default-lease-time 600;
+  max-lease-time 7200;
   option subnet-mask {{or (getenv "NETMASK") "255.255.255.0"}};
   option broadcast-address {{or (getenv "BROADCAST") "192.168.0.255"}};
   option routers {{or (getenv "ROUTER") "192.168.0.1"}};
@@ -41,15 +42,15 @@ subnet {{or (getenv "SUBNET") "192.168.0.0"}} netmask {{or (getenv "NETMASK") "2
   option domain-name {{or (getenv "DOMAIN") "default"}};
 
 
-  zone    10.40.10.in-addr.arpa. {
-    primary 10.40.10.1;
-    key             "rndc-key";
-  }
+#  zone    10.40.10.in-addr.arpa. {
+#    primary 10.40.10.1;
+#    key             "rndc-key";
+#  }
 
-  zone    localdomain. {
-    primary 10.40.10.1;
-    key             "rndc-key";
-  }
+#  zone    localdomain. {
+#    primary 10.40.10.1;
+#    key             "rndc-key";
+#  }
 
 }
 
