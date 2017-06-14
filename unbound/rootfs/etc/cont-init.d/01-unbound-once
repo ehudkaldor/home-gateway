@@ -1,0 +1,5 @@
+#!/usr/bin/execlineb -P
+
+with-contenv
+
+wget -S -N https://www.internic.net/domain/named.cache -O /etc/unbound/root.hints
