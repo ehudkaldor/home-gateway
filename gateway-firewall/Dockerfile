@@ -7,18 +7,23 @@
 ################################################
 
 FROM		alpine:3.2
-MAINTAINER	Ehud Kaldor <ehud.kaldor@gmail.com>
+MAINTAINER	Ehud Kaldor <ehud@unfairfunction.org>
 
 RUN 		apk add --update iptables && \
 		rm -rf /var/cache/apk/* 
-#	        curl -sSL -o pipework https://raw.github.com/jpetazzo/pipework/master/pipework && \
-#        	chmod +x pipework
+
+ADD	        https://raw.github.com/jpetazzo/pipework/master/pipework pipework
+
+RUN        	chmod +x pipework
 
 COPY		run.sh /root/run.sh
 
 RUN		chmod 777 /root/run.sh
 
 ENTRYPOINT  \
-        iptables -A FORWARD -p tcp --dport 80 -j ACCEPT && \
-        iptables -A FORWARD -j DROP && \
-        /root/run.sh
+                echo Waiting for pipework to give us the eth1 interface... &&\
+                ./pipework --wait && \
+		echo Starting iptables and adding rulez
+	        iptables -A FORWARD -p tcp --dport 80 -j ACCEPT && \
+       	 	iptables -A FORWARD -j DROP && \
+       		/root/run.sh
