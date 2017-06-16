@@ -6,11 +6,16 @@
 #
 ################################################
 
+<<<<<<< HEAD
 FROM		alpine:3.2
+=======
+FROM		ehudkaldor/alpine-rpi
+>>>>>>> router/master
 MAINTAINER	Ehud Kaldor <ehud@unfairfunction.org>
 
 RUN 		apk add --update iptables && \
 		rm -rf /var/cache/apk/* 
+<<<<<<< HEAD
 
 ADD	        https://raw.github.com/jpetazzo/pipework/master/pipework pipework
 
@@ -27,3 +32,7 @@ ENTRYPOINT  \
 	        iptables -A FORWARD -p tcp --dport 80 -j ACCEPT && \
        	 	iptables -A FORWARD -j DROP && \
        		/root/run.sh
+=======
+
+COPY		rootfs /
+>>>>>>> router/master

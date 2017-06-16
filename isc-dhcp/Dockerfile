@@ -20,5 +20,8 @@ COPY 		rootfs /
 
 RUN     	ln -s /bin/s6-true /etc/services.d/isc-dhcp/finish
 
+
+#USER		root
+
 ENTRYPOINT	["/init"]
 
