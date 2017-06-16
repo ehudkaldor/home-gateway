@@ -1,0 +1,48 @@
+################################################
+#
+#  this is an Alpine Linux based NAS server
+#  container, serving files over both NFS
+#  and SMB (CIFS)
+#
+################################################
+
+FROM		alpine
+MAINTAINER	Ehud Kaldor <ehud@unfairfunction.org>
+
+RUN             apk add --update alpine-sdk gcc git cmake autoconf libtool bison flex libgssglue-dev openssl-dev doxygen krb5-dev libnfsidmap jemalloc && \
+		echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories  &&
+		echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories &&
+ 		apk add --update libexecinfo-dev@edge  && \
+		ln -s /usr/include/gssrpc /usr/include/rpc && \
+		ln -s /usr/include/rpc/xdr.h /usr/include/rpc/xdr_inline.h && \
+		git clone https://github.com/nfs-ganesha/nfs-ganesha.git &&
+		mkdir build &&
+		cd build &&
+		cmake ../nfs-ganesha/src/
+				
+		apk del alpine-sdk gcc git cmake autoconf libtool bison flex libgssglue-dev openssl-dev doxygen krb5-dev libnfsidmap jemalloc libexecinfo-dev@edge libexecinfo@edge
+                rm -rf /tmp/* && \
+		rm -rf /var/cache/apk/* 
+
+RUN		mkdir -p /var/export && \
+		echo "/var/export	127.0.0.1(rw,sync)" >> /etc/exports && \
+		rc-update add nfs 
+#		exportfs -a
+
+
+EXPOSE 		111/udp 2049/tcp
+
+
+
+#ADD             https://raw.github.com/jpetazzo/pipework/master/pipework pipework
+
+#RUN             chmod +x pipework
+
+#VOLUME	 	/var/export
+
+#CMD		\
+#                echo Waiting for pipework to give us the eth1 interface... && \
+#                ./pipework --wait && \
+#		echo Starting file services... && \
+#		cat /etc/exports && \
+#		exec init 
