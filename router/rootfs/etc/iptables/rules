@@ -1,0 +1,112 @@
+#########################################################################
+# Basic iptables IPv4 routing rule set
+#
+# 192.168.1.0/24 routed directly to PPP0 via NAT
+# 
+#########################################################################
+
+#
+# Mangle Table
+# We leave this empty for the moment.
+#
+*mangle
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+COMMIT
+
+#
+# Filter Table
+# This is where we decide to ACCEPT, DROP or REJECT things
+#
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+*filter
+
+# Create rule chain per input interface for forwarding packets
+:FWD_ETH0 - [0:0]
+:FWD_ETH1 - [0:0]
+:FWD_PPP0 - [0:0]
+
+# Create rule chain per input interface for input packets (for host itself)
+:IN_ETH0 - [0:0]
+:IN_ETH1 - [0:0]
+:IN_PPP0 - [0:0]
+
+# Create a log drop chain
+:LOG_DROP - [0:0]
+
+# Pass input packet to corresponding rule chain
+-A INPUT -i lo -j ACCEPT
+-A INPUT -i eth0 -j IN_ETH0
+-A INPUT -i eth1 -j IN_ETH1
+-A INPUT -i ppp0 -j IN_PPP0
+
+# Pass forwarded packet to corresponding rule chain
+-A FORWARD -i eth0 -j FWD_ETH0
+-A FORWARD -i eth1 -j FWD_ETH1
+-A FORWARD -i ppp0 -j FWD_PPP0
+
+# Forward LAN traffic out
+-A FWD_ETH0 -s 192.168.1.0/24 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+
+# Forward SSH packets from network to modem
+-A FWD_ETH1 -s 192.168.0.0/30 -d 192.168.1.0/24 -p tcp -m tcp --sport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+
+# Forward HTTP to modem's webserver
+-A FWD_ETH1 -s 192.168.0.0/30 -d 192.168.1.0/24 -p tcp -m tcp --sport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+
+# Forward traffic to ISP
+-A FWD_PPP0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+# SSH to Router
+-A IN_ETH0 -s 192.168.1.0/24 -p tcp -m tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+
+# DNS to Router
+-A IN_ETH0 -s 192.168.1.0/24 -p tcp -m tcp --dport 1812 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+
+# FreeRadius Client (eg a UniFi AP)
+-A IN_ETH0 -s 192.168.1.0/24 -p udp -m udp --dport 1812 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+
+# NTP to Router
+-A IN_ETH0 -s 192.168.1.0/24 -p udp -m udp --dport 123 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+
+# Accept traffic
+-A IN_ETH0 -s 192.168.1.0/24 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+
+# SSH To Modem from Router
+-A IN_ETH1 -s 192.168.0.1/32 -d 192.168.0.0/30 -p tcp -m tcp --sport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+
+# HTTP to modem
+-A IN_ETH1 -s 192.168.0.1/32 -d 192.168.0.0/30 -p tcp -m tcp --sport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+
+# Accept incoming tracked PPP0 connection
+-A IN_PPP0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+COMMIT
+
+#
+# NAT Table
+# This is where translation of packets happens and "forwarding" of ports
+# to specific hosts.
+#
+*nat
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+
+# Port forwarding for Bittorrent
+-A PREROUTING -i ppp0 -p tcp -m tcp --dport 6881:6889 -j DNAT --to-destination 192.168.1.20
+-A PREROUTING -i ppp0 -p udp -m udp --dport 6881:6889 -j DNAT --to-destination 192.168.1.20
+
+# Allows routing to our modem subnet so we can access the web interface or SSH
+-A POSTROUTING -s 192.168.1.0/24 -d 192.168.0.1/32 -o eth1 -p tcp -m tcp --dport 22 -j MASQUERADE
+-A POSTROUTING -s 192.168.1.0/24 -d 192.168.0.1/32 -o eth1 -p tcp -m tcp --dport 80 -j MASQUERADE
+
+# Allows hosts of the network to use the PPP tunnel
+-A POSTROUTING -s 192.168.1.0/24 -o ppp0 -j MASQUERADE
+COMMIT
