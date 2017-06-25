@@ -1,0 +1,3 @@
+[template]
+src = "unbound.conf.tmpl"
+dest = "/etc/unbound/unbound.conf"
