@@ -6,10 +6,10 @@
 #
 ################################################
 
-FROM		ehudkaldor/alpine-s6
+FROM		ehudkaldor/alpine-s6-confd
 MAINTAINER	Ehud Kaldor <ehud@unfairfunction.org>
 
-RUN 		apk add --update unbound && \
+RUN 		apk add --update unbound ca-certificates openssl && \
 		rm -rf /var/cache/apk/*
 
 COPY 		rootfs /
