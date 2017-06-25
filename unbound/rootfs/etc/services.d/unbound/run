@@ -3,4 +3,4 @@
 #s6-envdir env
 
 echo "Starting unbound dns server..."
-dhcpd -cf /etc/dhcp/dhcpd.conf -f
+unbound -d
