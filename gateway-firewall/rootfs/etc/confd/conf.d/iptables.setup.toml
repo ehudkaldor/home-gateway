@@ -1,4 +1,4 @@
 [template]
 src = "iptables_keepalive.tmpl"
-dest = "/etc/cont-init.d/01_iptables_runonce"
+dest = "/etc/cont-init.d/01-iptables.runonce"
 mode = "0744"
