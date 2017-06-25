@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# iptables Internet-connection sharing 
+# firewall script
+
+# Define your command variables
+ipt="/sbin/iptables"
+
+# Define multiple network interfaces
+wan="{{ or ( getenv "wan" ) "eth0" }}"
+lan="{{ or ( getenv "lan" ) "eth1" }}"
+
+
