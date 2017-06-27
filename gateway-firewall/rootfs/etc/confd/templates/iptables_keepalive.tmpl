@@ -10,4 +10,15 @@ ipt="/sbin/iptables"
 wan="{{ or ( getenv "wan" ) "eth0" }}"
 lan="{{ or ( getenv "lan" ) "eth1" }}"
 
+iptables-restore < /etc/iptables/iptables.rules
+echo "iptables restored:"
+iptables -L
+iptables -t nat -L
+
+while [ -u ${QUIT+x} ]
+do
+        echo "sleeping 10 seconds"
+        sleep 10
+        echo "checking exit criteria"
+done
 
