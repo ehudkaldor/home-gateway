@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/with-contenv sh
 
 # iptables Internet-connection sharing 
 # firewall script
@@ -15,10 +15,20 @@ echo "iptables restored:"
 iptables -L
 iptables -t nat -L
 
-while [ -u ${QUIT+x} ]
+while [ ! -f /etc/iptables/quit ]
 do
+	echo "to quit, create the file /etc/iptables/quit. to do so, copy and paste:"
+	echo "touch /etc/iptables/quit"
         echo "sleeping 10 seconds"
         sleep 10
         echo "checking exit criteria"
 done
 
+rulesfile=/var/log/iptables.rules.`date +%s%N`
+
+echo "exist criteria found. saving iptables rules"
+iptables-save > $rulesfile
+echo "iptables rules saved to $rulesfile"
+echo "exiting"
+
+sleep 10
