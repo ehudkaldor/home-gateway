@@ -1,9 +1,9 @@
 host aruba {
   hardware ethernet 18:64:72:c0:62:80;
-  fixed-address 10.40.10.100;
+  fixed-address {{or (getenv "ARUBA") "192.168.0.100"}};
 }
 
 host osmc {
   hardware ethernet 80:1f:02:f4:36:bc;
-  fixed-address 10.40.10.99;
+  fixed-address {{or (getenv "OSMC") "192.168.0.101"}};
 }

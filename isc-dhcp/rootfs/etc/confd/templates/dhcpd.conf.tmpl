@@ -32,7 +32,7 @@ update-static-leases   on;
 log-facility local7;
 
 subnet {{or (getenv "SUBNET") "192.168.0.0"}} netmask {{or (getenv "NETMASK") "255.255.255.0"}} {
-  range {{or (getenv "DHCP_FROM") "192.168.0.20"}} {{or (getenv "DHCP_TO") "192.168.0.100"}};
+  range {{or (getenv "DHCP_FROM") "192.168.0.20"}} {{or (getenv "DHCP_TO") "192.168.0.99"}};
   default-lease-time 600;
   max-lease-time 7200;
   option subnet-mask {{or (getenv "NETMASK") "255.255.255.0"}};
