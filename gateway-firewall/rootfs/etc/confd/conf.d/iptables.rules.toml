@@ -1,0 +1,4 @@
+[template]
+src = "iptables_rules.tmpl"
+dest = "/etc/iptables/iptables.rules"
+#mode = "0755"
