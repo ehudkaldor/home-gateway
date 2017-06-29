@@ -6,10 +6,6 @@
 # Define your command variables
 ipt="/sbin/iptables"
 
-# Define multiple network interfaces
-wan="{{ or ( getenv "wan" ) "eth0" }}"
-lan="{{ or ( getenv "lan" ) "eth1" }}"
-
 iptables-restore < /etc/iptables/iptables.rules
 echo "iptables restored:"
 iptables -L
