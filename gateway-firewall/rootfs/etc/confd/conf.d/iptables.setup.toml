@@ -2,3 +2,5 @@
 src = "iptables_keepalive.tmpl"
 dest = "/etc/services.d/keepalive_loop/run"
 mode = "0755"
+keys = [
+]
