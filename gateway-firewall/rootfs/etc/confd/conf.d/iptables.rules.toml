@@ -2,3 +2,8 @@
 src = "iptables_rules.tmpl"
 dest = "/etc/iptables/iptables.rules"
 #mode = "0755"
+keys = [
+  "/NICS/WAN",
+  "/NICS/LAN",
+  "/STATIC/ARUBA"
+]
