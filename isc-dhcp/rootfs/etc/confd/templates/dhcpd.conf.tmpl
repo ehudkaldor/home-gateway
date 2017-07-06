@@ -1,16 +1,10 @@
-#
-# Sample configuration file for ISC dhcpd for Debian
-#
-#
-
 # The ddns-updates-style parameter controls whether or not the server will
 # attempt to do a DNS update when a lease is confirmed. We default to the
 # behavior of the version 2 packages ('none', since DHCP v2 didn't
 # have support for DDNS.)
-#ddns-update-style none;
 
-ddns-updates           {{or (getenv "DDNS_UPDATES") "on"}};
-ddns-update-style      {{or (getenv "DDNS_UPDATE_STYLE") "interim"}};
+ddns-updates           {{or (getv "/DDNS/UPDATES") "on"}};
+ddns-update-style      {{or (getv "/DDNS/STYLE") "interim"}};
 ignore                 client-updates;
 update-static-leases   on;
 
@@ -18,7 +12,7 @@ update-static-leases   on;
 #include                     "/etc/bind/rndc.key";
 
 # This is the communication zone
-#zone {{or (getenv "DNS_ZONE_NAME") "default."}} {
+#zone {{or (getv "/DNS/ZONE") "default."}} {
 #    primary 127.0.0.1;
 #    key rndc-key;
 #}
@@ -31,15 +25,15 @@ update-static-leases   on;
 # have to hack syslog.conf to complete the redirection).
 log-facility local7;
 
-subnet {{or (getenv "SUBNET") "192.168.0.0"}} netmask {{or (getenv "NETMASK") "255.255.255.0"}} {
-  range {{or (getenv "DHCP_FROM") "192.168.0.20"}} {{or (getenv "DHCP_TO") "192.168.0.99"}};
+subnet {{or (getv "/DHCP/SUBNET") "192.168.0.0"}} netmask {{or (getv "/DHCP/NETMASK") "255.255.255.0"}} {
+  range {{or (getv "/DHCP/FROM") "192.168.0.20"}} {{or (getv "/DHCP/TO") "192.168.0.99"}};
   default-lease-time 600;
   max-lease-time 7200;
-  option subnet-mask {{or (getenv "NETMASK") "255.255.255.0"}};
-  option broadcast-address {{or (getenv "BROADCAST") "192.168.0.255"}};
-  option routers {{or (getenv "ROUTER") "192.168.0.1"}};
-  option domain-name-servers {{or (getenv "DNS") "192.168.0.1"}};
-  option domain-name {{or (getenv "DOMAIN") "default"}};
+  option subnet-mask {{or (getv "/DHCP/NETMASK") "255.255.255.0"}};
+  option broadcast-address {{or (getv "/DHCP/BROADCAST") "192.168.0.255"}};
+  option routers {{or (getv "/DHCP/ROUTER") "192.168.0.1"}};
+  option domain-name-servers {{or (getv "/DHCP/DNS") "192.168.0.1"}};
+  option domain-name {{or (getv "/DHCP/DOMAIN") "default"}};
 
 
 #  zone    10.40.10.in-addr.arpa. {
@@ -74,16 +68,6 @@ subnet {{or (getenv "SUBNET") "192.168.0.0"}} netmask {{or (getenv "NETMASK") "2
 # set.
 
 include "/etc/dhcp/dhcpd-reservations.conf";
-
-#host aruba {
-#  hardware ethernet 18:64:72:c0:62:80;
-#  fixed-address 10.40.10.100;
-#}
-
-#host osmc {
-#  hardware ethernet 80:1f:02:f4:36:bc;
-#  fixed-address 10.40.10.99;
-#}
 
 # You can declare a class of clients and then do address allocation
 # based on that.   The example below shows a case where all clients
