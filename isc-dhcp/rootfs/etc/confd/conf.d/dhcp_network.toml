@@ -1,3 +1,5 @@
 [template]
 src = "dhcpd_network.conf.tmpl"
 dest = "/etc/dhcp/dhcpd-network.conf"
+keys = [
+]
