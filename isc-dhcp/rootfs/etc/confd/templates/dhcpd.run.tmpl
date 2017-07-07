@@ -2,7 +2,7 @@
 #fdmove -c 2 1
 #s6-envdir env
 
-ip addr add dev eth0 local 10.30.10.1
+ip addr add dev eth0 local {{ or (getv "/DHCP/ROUTER") "192.168.0.1" }}
 echo "IP address set:" 
 ip addr show
 

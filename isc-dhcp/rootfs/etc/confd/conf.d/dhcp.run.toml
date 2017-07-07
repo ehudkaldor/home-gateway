@@ -1,0 +1,6 @@
+[template]
+src = "dhcpd.run.tmpl"
+dest = "/etc/services.d/isc-dhcp/run"
+keys = [
+  "/DHCP/ROUTER",
+]
