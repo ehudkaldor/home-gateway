@@ -6,7 +6,7 @@
 #
 ################################################
 
-FROM		ehudkaldor/alpine-s6-confd
+FROM		ehudkaldor/alpine-s6:latest
 MAINTAINER	Ehud Kaldor <ehud@unfairfunction.org>
 
 RUN 		apk add --update unbound ca-certificates openssl && \
