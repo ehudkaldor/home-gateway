@@ -1,10 +1,10 @@
-subnet {{or (getenv "SUBNET") "192.168.0.0"}} netmask {{or (getenv "NETMASK") "255.255.255.0"}} {
-  range {{or (getenv "DHCP_FROM") "192.168.0.20"}} {{or (getenv "DHCP_TO") "192.168.0.100"}};
+subnet {{or (getv "/DHCP/SUBNET") "192.168.0.0"}} netmask {{or (getv "/DHCP/NETMASK") "255.255.255.0"}} {
+  range {{or (getv "/DHCP/FROM") "192.168.0.20"}} {{or (getv "/DHCP/TO") "192.168.0.100"}};
   default-lease-time 600;
   max-lease-time 7200;
-  option subnet-mask {{or (getenv "NETMASK") "255.255.255.0"}};
-  option broadcast-address {{or (getenv "BROADCAST") "192.168.0.255"}};
-  option routers {{or (getenv "ROUTER") "192.168.0.1"}};
-  option domain-name-servers {{or (getenv "DNS") "192.168.0.1"}};
-  option domain-name {{or (getenv "DOMAIN") "default"}};
+  option subnet-mask {{or (getv "/DHCP/NETMASK") "255.255.255.0"}};
+  option broadcast-address {{or (getv "/DHCP/BROADCAST") "192.168.0.255"}};
+  option routers {{or (getv "/DHCP/ROUTER") "192.168.0.1"}};
+  option domain-name-servers {{or (getv "/DHCP/DNS") "192.168.0.1"}};
+  option domain-name {{or (getv "/DHCP/DOMAIN") "default"}};
 
