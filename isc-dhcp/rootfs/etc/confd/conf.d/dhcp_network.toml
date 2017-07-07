@@ -2,4 +2,15 @@
 src = "dhcpd_network.conf.tmpl"
 dest = "/etc/dhcp/dhcpd-network.conf"
 keys = [
+  "/DDNS/UPDATES",
+  "/DDNS/STYLE",
+  "/DNS/ZONE",
+  "/DHCP/SUBNET",
+  "/DHCP/FROM",
+  "/DHCP/TO",
+  "/DHCP/NETMASK",
+  "/DHCP/BROADCAST",
+  "/DHCP/ROUTER",
+  "/DHCP/DNS",
+  "/DHCP/DOMAIN"
 ]
